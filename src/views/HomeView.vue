@@ -1,102 +1,78 @@
-<!-- <script setup lang="ts">
-import {
-  Field,
-  FieldDescription,
-  FieldGroup,
-  FieldLabel,
-  FieldLegend,
-  FieldSet,
-} from '@/components/ui/field'
-import { Input } from '@/components/ui/input'
-import Button from '@/components/ui/button/Button.vue';
-</script> -->
-
-<!-- <template>
-  <div class="flex justify-center items-center h-screen">
-    <div class="w-full md:w-3/4 xl:w-3/12 space-y-6 mx-auto bg-white p-6 rounded-2xl shadow">
-      <FieldSet>
-        <FieldLegend class=" text-center text-2xl uppercase my-4">Inicio de sesión</FieldLegend>
-        <FieldDescription class=" text-xl">
-          Ingresa tu email y contraseña para iniciar sesión.
-        </FieldDescription>
-        <FieldGroup>
-          <Field>
-            <FieldLabel for="email">
-              Email:
-            </FieldLabel>
-            <Input id="email" type="text" placeholder="correo@correo.com" class=" placeholder:text-gray-400" />
-          </Field>
-
-          <Field>
-            <FieldLabel for="password">
-              contraseña
-            </FieldLabel>
-            <Input id="password" type="text" placeholder="***********" />
-          </Field>
-
-          <Button>Ingresar</Button>
-        </FieldGroup>
-      </FieldSet>
-    </div>
-  </div>
-</template> -->
+<script lang="ts">
+export const description
+  = "A sidebar that collapses to icons."
+export const iframeHeight = "800px"
+export const containerClass = "w-full h-full"
+</script>
 
 <script setup lang="ts">
-import { Button } from '@/components/ui/button'
+import AppSidebar from "@/components/AppSidebar.vue"
 import {
-  Card,
-  CardAction,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb"
+import { Separator } from "@/components/ui/separator"
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar"
+
+import { payments } from "@/lib/data"
+import type { Payment } from '@/components/payments/columns'
+import { onMounted,ref } from "vue"
+import DataTable from "@/components/payments/data-table.vue"
+import { columns} from "@/components/payments/columns"
+
+const data = ref<Payment[]>([])
+onMounted(() => {
+  // Simulate data fetching
+  setTimeout(() => {
+    data.value = payments
+  }, 1000)
+})
 </script>
 
 <template>
-  <div class=" flex justify-center items-center h-screen">
-    <Card class="w-full md:w-3/12 mx-auto">
-      <CardHeader>
-        <CardTitle>Login to your account</CardTitle>
-        <CardDescription>
-          Enter your email below to login to your account
-        </CardDescription>
-        <CardAction>
-          <Button variant="link">
-            Sign Up
-          </Button>
-        </CardAction>
-      </CardHeader>
-      <CardContent>
-        <form>
-          <div class="grid w-full items-center gap-4">
-            <div class="flex flex-col space-y-1.5">
-              <Label for="email">Email</Label>
-              <Input id="email" type="email" placeholder="m@example.com" />
-            </div>
-            <div class="flex flex-col space-y-1.5">
-              <div class="flex items-center">
-                <Label for="password">Password</Label>
-                <a href="#" class="ml-auto inline-block text-sm underline">
-                  Forgot your password?
-                </a>
-              </div>
-              <Input id="password" type="password" />
-            </div>
-          </div>
-        </form>
-      </CardContent>
-      <CardFooter class="flex flex-col gap-2">
-        <Button class="w-full">
-          Login
-        </Button>
-        <Button variant="outline" class="w-full">
-          Login with Google
-        </Button>
-      </CardFooter>
-    </Card>
-  </div>
+  <SidebarProvider>
+    <AppSidebar />
+    <SidebarInset>
+      <header class="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
+        <div class="flex items-center gap-2 px-4">
+          <SidebarTrigger class="-ml-1" />
+          <Separator
+            orientation="vertical"
+            class="mr-2 data-[orientation=vertical]:h-4"
+          />
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem class="hidden md:block">
+                <BreadcrumbLink href="#">
+                  Building Your Application
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator class="hidden md:block" />
+              <BreadcrumbItem>
+                <BreadcrumbPage>Data Fetching</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+        </div>
+      </header>
+      <div class="flex flex-1 flex-col gap-4 p-4 pt-0">
+        <div class="grid auto-rows-min gap-4 md:grid-cols-3">
+          <div class="bg-muted/50 aspect-video rounded-xl" />
+          <div class="bg-muted/50 aspect-video rounded-xl" />
+          <div class="bg-muted/50 aspect-video rounded-xl"/>
+        </div>
+        <div class="bg-muted/50 min-h-[100vh] flex-1 rounded-xl md:min-h-min p-2">
+          <DataTable :columns="columns" :data="data" />
+        </div>
+      </div>
+    </SidebarInset>
+  </SidebarProvider>
 </template>
